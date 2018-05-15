@@ -110,5 +110,14 @@
     "webpack-bundle-analyzer": "^2.9.1",
     "webpack-cli": "^2.1.3",
     "webpack-merge": "^4.1.1"
-  }
+  },
+  "keywords": [
+    "electron",
+    "cad",
+    "editor",
+    "drawing",
+    "three.js",
+    "example",
+    "geometry"
+  ]
 }
