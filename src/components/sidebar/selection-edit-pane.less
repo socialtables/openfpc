@@ -1,0 +1,71 @@
+@import "../../less/colors.less";
+
+.edit-panel-container {
+  height: 100%;
+  padding: 15px 24px;
+  background-color: @white-2;
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    margin-bottom: 24px;
+    font-size: 18px;
+  }
+
+  label {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.43;
+    letter-spacing: 0.5px;
+  }
+
+  button {
+    width: 100px;
+    height: 32px;
+  }
+
+  .dropdown {
+    &__menu-button {
+      height: 32px;
+      margin-top: 5px;
+      padding-left: 16px;
+      background-color: @white-1;
+      border: solid 1px #3b4775;
+      &:hover {
+        color: #000000;
+        background-color: @white-1;
+        .svg-replacement {
+          fill: #000000;
+        }
+      }
+    }
+
+    &__menu-container {
+      border: solid 1px #5371fa;
+    }
+
+    &__option {
+      &--is-selected {
+        color: @white-1;
+        background-color: #5371fa;
+      }
+      &:hover {
+        color: @white-1;
+        background-color: #2b49fa;
+      }
+    }
+
+    &--is-open {
+      .dropdown__menu-button {
+        color: #000000;
+        background-color: @white-1;
+        border: solid 1px #5371fa;
+        .svg-replacement {
+          fill: #000000;
+        }
+      }
+    }
+  }
+}

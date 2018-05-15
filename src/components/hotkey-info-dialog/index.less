@@ -1,0 +1,28 @@
+@import "../../less/colors.less";
+
+.hotkey-dialog {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+
+  & > h3 {
+    font-size: 18px
+  }
+
+  &__table {
+    width: 100%;
+    margin-top: 15px;
+    tr {
+      // text-align: center;
+    }
+    td {
+      & > span:first-child {
+        margin-right: 8px;
+      }
+      & > span:last-child {
+        font-family: monospace;
+      }
+    }
+  }
+}

@@ -1,0 +1,56 @@
+@font-face {
+	font-family: "Geomanist";
+	src: url("fonts/geomanist/regular/geomanist-regular-webfont.woff2") format("woff2"),
+		url("fonts/geomanist/regular/geomanist-regular-webfont.woff") format("woff");
+	font-weight: 400;
+}
+@font-face {
+	font-family: "Geomanist";
+	src: url("fonts/geomanist/book/geomanist-book-webfont.woff2") format("woff2"),
+		url("fonts/geomanist/book/geomanist-book-webfont.woff") format("woff");
+	font-weight: 500;
+}
+@font-face {
+	font-family: "Geomanist";
+	src: url("fonts/geomanist/bold/geomanist-bold-webfont.woff2") format("woff2"),
+		url("fonts/geomanist/bold/geomanist-bold-webfont.woff") format("woff");
+	font-weight: 700;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  font-family: "Geomanist", "Open Sans", sans-serif;
+}
+
+#main {
+  width: 100%;
+  height: 100%;
+}
+
+.hovering-on-thing {
+    cursor: pointer;
+}
+
+.selection {
+  position: absolute;
+  background: rgba(173, 216, 230, 0.25);
+  border: 1px solid #ADD8E6;
+  opacity: 25%;
+  width: 50px;
+  height: 50px;
+  visibility: hidden;
+  z-index: 100;
+}
+
+.selection-layer {
+  width: 100%;
+  height: 100%;
+  z-index: 200;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}

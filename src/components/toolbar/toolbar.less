@@ -1,0 +1,97 @@
+@import "../../less/colors.less";
+
+.header-bar__toolbar {
+  display: flex;
+  align-items: center;
+  .toolbar__group {
+    display: flex;
+    align-items: center;
+    .tool:not(:first-child), .dropdown:not(:first-child), .object-tool:not(:first-child) {
+      margin-left: 2px;
+    }
+    .tool:not(:last-child), .dropdown:not(:last-child), .object-tool:not(:last-child) {
+      margin-right: 2px;
+    }
+  }
+  .toolbar__divider {
+    width: 1px;
+    height: 28px;
+    margin: 0 8px;
+    background-color: #979797
+  }
+  .toolbar__tooltip {
+    margin-top: 6px !important;
+    padding: 8px 12px !important;
+    background-color: #17234D !important;
+    color: @white-1 !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    line-height: 1.33 !important;
+    &.show {
+      opacity: 1 !important;
+    }
+  }
+  .tool {
+    width: 37px;
+    height: 34px;
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    svg, svg * {
+      fill: #313f4c;
+    }
+    &:hover {
+      background-color: #e3e7fe;
+    }
+    &--is-selected {
+      background-color: #5371fa;
+      svg, svg * {
+        fill: @white-1;
+      }
+      &:hover {
+        background-color: #5371fa;
+        svg, svg * {
+          fill: @white-1;
+        }
+      }
+    }
+  }
+
+  .object-tool {
+    width: 37px;
+    height: 34px;
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    &:hover {
+      background-color: #e3e7fe;
+    }
+    &--is-selected {
+      background-color: #5371fa;
+      &:hover {
+        background-color: #5371fa;
+      }
+    }
+    &__format-svg {
+      svg, svg * {
+        stroke: #313f4c;
+      }
+      &--is-selected {
+        svg, svg * {
+          stroke: @white-1;
+        }
+        &:hover {
+          svg, svg * {
+            stroke: @white-1;
+          }
+        }
+      }
+    }
+  }
+}

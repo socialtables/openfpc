@@ -1,0 +1,88 @@
+{
+  "extends": "eslint:recommended",
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2017,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true,
+      "jsx": true
+    }
+  },
+  "plugins": [
+    "react"
+  ],
+  "globals": {
+    "before": true,
+    "after": true,
+    "it": true,
+    "describe": true,
+    "Float32Array": true,
+    "Promise": true
+  },
+  "rules": {
+    "array-callback-return": "error",
+    "block-scoped-var": "error",
+    "curly": "error",
+    "comma-dangle": 2,
+    "dot-notation": "error",
+    "eqeqeq": [
+      "error",
+      "always"
+    ],
+    "guard-for-in": "error",
+    "indent": [
+      "warn",
+      2,
+      {
+        "MemberExpression": 0
+      }
+    ],
+    "max-depth": [
+      "error",
+      4
+    ],
+    "max-nested-callbacks": [
+      "error",
+      {
+        "max": 4
+      }
+    ],
+    "no-alert": "error",
+    "no-caller": "error",
+    "no-else-return": "error",
+    "no-eval": "error",
+    "no-use-before-define": "warn",
+    "no-extend-native": "error",
+    "no-extra-bind": "warn",
+    "no-floating-decimal": "warn",
+    "no-implied-eval": "error",
+    "no-iterator": "error",
+    "no-lone-blocks": "error",
+    "no-loop-func": "warn",
+    "no-multi-spaces": "warn",
+    "no-new": "error",
+    "no-new-func": "error",
+    "no-new-wrappers": "error",
+    "no-param-reassign": "error",
+    "no-proto": "error",
+    "no-script-url": "error",
+    "no-self-compare": "error",
+    "no-template-curly-in-string": "warn",
+    "no-trailing-spaces": "warn",
+    "no-undef": "error",
+    "no-unreachable": "error",
+    "prefer-promise-reject-errors": "warn",
+    "quotes": [
+      "warn",
+      "double"
+    ],
+    "react/jsx-uses-react": "error",
+    "react/jsx-uses-vars": "error",
+    "semi": "error",
+    "yoda": "warn"
+  }
+}

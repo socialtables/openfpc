@@ -1,0 +1,27 @@
+.view-toggle {
+  display: flex;
+  &__option:first-child {
+    border-radius: 4px 0 0 4px;
+    border-right: none;
+  }
+  &__option:last-child {
+    border-radius: 0 4px 4px 0;
+  }
+  &__option {
+    width: 64px;
+    height: 28px;
+    background-color: #ebf0fa;
+    border: solid 1px #ffffff;
+    font-size: 12px;
+    line-height: 1.17;
+    letter-spacing: 0.2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    &--is-selected {
+      color: #ffffff;
+      background-color: #5371fa;
+    }
+  }
+}

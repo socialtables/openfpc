@@ -1,0 +1,29 @@
+.objects-toggle {
+  width: 70px;
+  margin-left: 30px;
+  margin-right: 4px;
+  font-size: 12px;
+  line-height: 1.67;
+  letter-spacing: 0.4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: default;
+  svg {
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+    fill: #ffffff;
+    border: solid 1px #5371fa;
+  }
+  &--is-checked {
+    svg {
+      background-color: #5371fa;
+    }
+  }
+}

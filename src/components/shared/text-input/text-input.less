@@ -1,0 +1,43 @@
+@import "../../../less/colors.less";
+
+.text-input {
+    width: 100%;
+    height: 32px;
+    border-radius: 4px;
+    background-color: @white-1;
+    border: solid 1px @gray-16;
+    font-family: Geomanist;
+    font-size: 16px;
+
+    letter-spacing: 0.5px;
+    padding-left: 10px;
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    &::-webkit-input-placeholder {
+        color: @gray-3;
+    }
+    &::-moz-placeholder {
+        color: @gray-3;
+    }
+}
+
+.text-input.is-disabled {
+    &:hover,
+    &:active,
+    &t:focus {
+        background-color: @gray-15;
+        color: @gray-3;
+        cursor: default;
+
+        &::-webkit-input-placeholder {
+            color: @gray-3;
+        }
+        &::-moz-placeholder {
+            color: @gray-3;
+        }
+    }
+}

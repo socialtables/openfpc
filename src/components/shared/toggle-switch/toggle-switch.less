@@ -1,0 +1,32 @@
+@import "../../../less/colors.less";
+
+.toggle-switch {
+  border: 1px solid @gray-4;
+  height: 20px;
+  width: 38px;
+  border-radius: 80px;
+  background-color: @gray-4;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+
+  &__switch-toggle {
+    position: relative;
+    left: 1;
+    border: 1px solid @white-1;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background-color: @white-1;
+    transition: all .2s ease-in-out;
+  }
+
+  &--on {
+    background-color: @periwinkle-4;
+    border-color: @periwinkle-4;
+
+    .toggle-switch__switch-toggle {
+      left: 19px;
+    }
+  }
+}

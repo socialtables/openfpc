@@ -1,0 +1,28 @@
+@import "../../less/colors.less";
+
+.save-dialog__contents {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	height: 90%;
+
+	& > p {
+		margin: 10px 0;
+	}
+
+	button {
+		width: 200px;
+		height: 32px;
+		margin-top: 20px;
+		color: @white-1;
+		background-color: @pink-3;
+		border-color: @pink-3;
+	}
+
+	&__btn-container {
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+}

@@ -1,0 +1,30 @@
+.main-content-and-sidebar {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 110px);
+  display: flex;
+}
+
+.main-content-container {
+  position: relative;
+  flex-grow: 1;
+}
+
+.sidebar-container {
+  height: 100%;
+  width: 216px;
+  position: relative;
+}
+
+.viewport-container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  & > div {
+    width: 100%;
+    height: 100%;
+  }
+}
