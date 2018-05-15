@@ -27,7 +27,7 @@
     "lint": "eslint .",
     "prebuild": "npm run lint",
     "build": "webpack --config webpack.config.js",
-    "prepublish": "npm run build"
+    "prepublish": "NODE_ENV=production npm run build"
   },
   "dependencies": {
     "ajv": "^6.5.0",

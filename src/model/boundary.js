@@ -8,7 +8,7 @@ import {
   interpolateArcPointsByConstraints,
   computeArcRadius,
   computeArcAngle
-} from "../lib/floor-geometry";
+} from "../lib/floor-geometry/arcs";
 
 // boundary type
 export default class Boundary extends Record ({
