@@ -26,7 +26,8 @@
     "start": "electron .",
     "lint": "eslint .",
     "prebuild": "npm run lint",
-    "build": "webpack --config webpack.config.js"
+    "build": "webpack --config webpack.config.js",
+    "prepublish": "npm run build"
   },
   "dependencies": {
     "ajv": "^6.5.0",
