@@ -28,6 +28,8 @@ openfpc sample-data/socialtables-hq-v3.json
 
 ## Functionality
 
+![](./st-hq.png)
+
 - 2D CAD tool with point / boundary / object manipulation
 - loads and saves JSON files, with support for Social Tables V3 floor data
 - create points, boundaries, and objects
