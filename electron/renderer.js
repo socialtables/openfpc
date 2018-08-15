@@ -103,7 +103,6 @@ function initApp ({ mode = "editor" } = {}) {
 }
 
 function init() {
-
   let initializedApp = null;
 
   // handle display mode assignment and app readiness

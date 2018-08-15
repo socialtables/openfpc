@@ -9,13 +9,15 @@ class ViewOnlyApp extends Component {
     const { dispatch } = this.props;
     return (
       <div>
-        <div className="main-content-and-sidebar">
+        <div className="main-content-and-sidebar view-only">
           <div className="main-content-container">
             <div className="viewport-container">
               <Viewport
                 height="100%"
                 width="100%"
                 showMeasurements={true}
+                selectableEntityTypes={{}}
+                hiddenEntityTypes={{ region: 1 }}
               />
             </div>
           </div>
