@@ -10,7 +10,7 @@ const loadScene = require("./lib/loader");
 
 // stub out window env - would be good to remove this later
 window.ENV = window.ENV || {};
-window.ENV.__DEV__ = true;
+// window.ENV.__DEV__ = true;
 
 // helper for parsing a scene
 function parseSceneFile (fileContents) {
@@ -84,7 +84,7 @@ function onSaveFile (store, data, { currentFileName, currentFilePath }) {
   );
 }
 
-function init() {
+function initApp ({ mode = "editor" } = {}) {
 
   // manually create app store so we can dispatch events from main process
   const appStore = App.createStore();
@@ -93,13 +93,37 @@ function init() {
   const appEl = React.createElement(App, {
     store: appStore,
     onLoadFile: onLoadFile.bind(null, appStore),
-    onSaveFile: onSaveFile.bind(null, appStore)
+    onSaveFile: onSaveFile.bind(null, appStore),
+    mode
   });
+
   ReactDOM.render(appEl, document.getElementById("openfpc-view"));
 
-  // wire events from the main process into redux actions
-  ipcRenderer.on("load-file", (event, { fileContents, fileName, filePath }) => {
-    loadFloorFromFileContents(appStore, fileContents, fileName, filePath);
+  return { store: appStore };
+}
+
+function init() {
+
+  let initializedApp = null;
+
+  // handle display mode assignment and app readiness
+  ipcRenderer.on("init-app", (e, msg) => {
+    const { mode = "editor" } = msg;
+    initializedApp = initApp({ mode });
+    ipcRenderer.send("ack", msg);
+  });
+
+  // handle load events
+  ipcRenderer.on("load-file", (event, {
+    fileContents,
+    fileName,
+    filePath,
+    messageId
+  }) => {
+    initializedApp || (initializedApp = initApp());
+    const { store } = initializedApp;
+    loadFloorFromFileContents(store, fileContents, fileName, filePath);
+    ipcRenderer.send("ack", { messageId });
   });
 
   // tell the main process we're ready for more events

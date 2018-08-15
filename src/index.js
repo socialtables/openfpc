@@ -1,6 +1,7 @@
 import { Component } from "react";
 import { Provider } from "react-redux";
 import AppRoot from "./components/app";
+import ViewOnlyAppRoot from "./components/view-only-app";
 import { FLOOR_LOADED, FLOOR_SAVED } from "./constants/load-save";
 import createStore from "./store";
 import { setLoadSaveCallbacks } from "./actions/load-save-actions";
@@ -39,10 +40,11 @@ export default class OpenFPCApp extends Component {
     }
   }
   render () {
+    const viewMode = this.props.mode === "visualizer";
     const { store } = this.state;
     return (
       <Provider store={ store }>
-        <AppRoot />
+        { viewMode ? <ViewOnlyAppRoot /> : <AppRoot/> }
       </Provider>
     );
   }

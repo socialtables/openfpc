@@ -6,17 +6,27 @@ const commander = require("commander");
 const fs = require("fs");
 const path = require("path");
 const url = require("url");
+const shortid = require("shortid");
 
 // grab command line args
 const cmdArgs = {};
 commander
 .arguments("[file]")
 .option("--dev", "open DevTools")
+.option("--display-only", "open in display-only mode")
+.option("--screenshot [file]", "screenshot to specified file")
+// commander won't d its action clause without a file argument
 .action((file, { dev }) => Object.assign(cmdArgs, { file, dev }));
 commander.parse(process.argv);
 
-// commander won't fire its action clause without a file argument
+// combine args present on commander instance with cmdArgs object to get
+// full args
 cmdArgs.dev = cmdArgs.dev || commander.dev;
+cmdArgs.displayOnly = cmdArgs.displayOnly || commander.displayOnly;
+cmdArgs.screenshot = cmdArgs.screenshot || commander.screenshot;
+if (cmdArgs.screenshot === true) {
+  cmdArgs.screenshot = "screenshot";
+}
 
 // loader for specified file
 function loadTargetFile(targetFileName) {
@@ -39,7 +49,7 @@ function loadTargetFile(targetFileName) {
 
 // need global reference to prevent GC deref
 let mainWindow;
-function createWindow () {
+async function createWindow () {
 
   // kick off loading he target file
   let fileLoadStub;
@@ -62,7 +72,8 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     width: 1100,
     height: 700,
-    title: cmdArgs.file ? `OpenFPC - ${cmdArgs.file}` : "OpenFPC"
+    title: cmdArgs.file ? `OpenFPC - ${cmdArgs.file}` : "OpenFPC",
+    show: false
   });
 
   mainWindow.loadURL(url.format({
@@ -80,23 +91,50 @@ function createWindow () {
     process.exit(0);
   });
 
-  // when file and window are loaded, send file to window
-  let fileContents;
-  if (fileLoadStub) {
-    Promise.all([
-      windowLoadStub,
-      fileLoadStub.then(contents => fileContents = contents)
-    ])
-    .then(() => {
-      mainWindow.webContents.send("load-file", {
+  // set up promise-chainable comms to the window
+  const resolveInFlight = {};
+  function sendMessageAndPromiseResponse (channel, rawData, ...extra) {
+    const data = Object.assign({ messageId: shortid() }, rawData || {});
+    const messageId = data.messageId;
+    const chain = new Promise(resolve => resolveInFlight[messageId] = resolve);
+    mainWindow.webContents.send(channel, data, ...extra);
+    return chain;
+  }
+  ipcMain.on("ack", (event, msg) => {
+    const { messageId } = msg;
+    const resolve = resolveInFlight[messageId];
+    if (resolve) {
+      resolve(msg);
+      delete resolveInFlight[messageId];
+    }
+  });
+
+  // finally, attempt to do whatever the CLI speficies
+  try {
+
+    // load renderer
+    await windowLoadStub;
+
+    // configure and initialize
+    await sendMessageAndPromiseResponse("init-app", {
+      mode: cmdArgs.displayOnly ? "visualizer" : "editor"
+    });
+
+    // display
+    mainWindow.show();
+
+    // load file
+    if (fileLoadStub) {
+      const fileContents = await fileLoadStub;
+      await sendMessageAndPromiseResponse("load-file", {
         fileContents,
         fileName: cmdArgs.file && path.basename(cmdArgs.file),
         filePath: cmdArgs.file
       });
-    })
-    .catch(e => {
-      global.console.error(e);
-    });
+    }
+  }
+  catch (e) {
+    global.console.error(e);
   }
 }
 
