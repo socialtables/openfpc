@@ -1,7 +1,34 @@
 {
   "entities": [
     {
-      "id": "HkGl7IfdPQIQ",
+      "id": "r1dBziltDmUX",
+      "type": "boundary",
+      "boundaryType": "wall",
+      "start": "Hy8goeKDmIm",
+      "end": "rJlUoltwXUQ",
+      "arc": 0,
+      "angle": 0,
+      "midPoint": {
+        "x": 1743.3100100000001,
+        "y": 184.05618
+      }
+    },
+    {
+      "id": "SJaHmsxtwQ8X",
+      "type": "object",
+      "objectType": "door",
+      "x": 1532.49108,
+      "y": 226,
+      "width": 20.16241949033884,
+      "height": 44.80537664519742,
+      "rotation": 270,
+      "isFlippedX": true,
+      "attachedToBoundary": "HkcHfslFPmU7",
+      "attachedToBoundaryPos": 0.5043708528180347,
+      "attachedToRegions": []
+    },
+    {
+      "id": "HyGgmigtwXU7",
       "type": "object",
       "objectType": "column",
       "x": 1606,
@@ -15,20 +42,7 @@
       "attachedToRegions": []
     },
     {
-      "id": "HkdSGLzuPXIQ",
-      "type": "boundary",
-      "boundaryType": "wall",
-      "start": "SkUgIf_D7LQ",
-      "end": "HygL8zOPQI7",
-      "arc": 0,
-      "angle": 0,
-      "midPoint": {
-        "x": 1743.3100100000001,
-        "y": 184.05618
-      }
-    },
-    {
-      "id": "S1TI7LMdvQIX",
+      "id": "SkaUXogFw7UQ",
       "type": "object",
       "objectType": "column",
       "x": 1680,
@@ -42,11 +56,11 @@
       "attachedToRegions": []
     },
     {
-      "id": "Bkoi-8zuDmIQ",
+      "id": "S1ssZsxtwm8m",
       "type": "boundary",
       "boundaryType": "wall",
-      "start": "rJEh8G_wmLm",
-      "end": "B1XLIM_wm8m",
+      "start": "HyN2seYvXLQ",
+      "end": "ryQUigKv7Um",
       "arc": 0,
       "angle": 3.141592653589793,
       "midPoint": {
@@ -55,7 +69,7 @@
       }
     },
     {
-      "id": "By-lQLGuPX8m",
+      "id": "BkbxXoeKPQLm",
       "type": "object",
       "objectType": "column",
       "x": 1753,
@@ -66,20 +80,6 @@
       "isFlippedX": false,
       "attachedToBoundary": null,
       "attachedToBoundaryPos": 0,
-      "attachedToRegions": []
-    },
-    {
-      "id": "B16SQIfdwmLQ",
-      "type": "object",
-      "objectType": "door",
-      "x": 1532.49108,
-      "y": 226,
-      "width": 20.16241949033884,
-      "height": 44.80537664519742,
-      "rotation": 270,
-      "isFlippedX": true,
-      "attachedToBoundary": "rJqrzLMODm87",
-      "attachedToBoundaryPos": 0.5043708528180347,
       "attachedToRegions": []
     }
   ],

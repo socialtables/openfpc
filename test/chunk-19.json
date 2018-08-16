@@ -1,17 +1,11 @@
 {
   "entities": [
     {
-      "id": "rJ8E8GOw7I7",
-      "type": "point",
-      "x": 719.37506,
-      "y": 1326.62046
-    },
-    {
-      "id": "ByhGzLzOw7IX",
+      "id": "By2ffoeFDXUm",
       "type": "boundary",
       "boundaryType": "wall",
-      "start": "B1lNLMuPmUX",
-      "end": "BJ-EIzOD7UX",
+      "start": "rJeVjgFwmUQ",
+      "end": "rk-NoetPX8Q",
       "arc": 0,
       "angle": 3.141592653589793,
       "midPoint": {
@@ -20,30 +14,17 @@
       }
     },
     {
-      "id": "BJ-EIzOD7UX",
+      "id": "rk-NoetPX8Q",
       "type": "point",
       "x": 716.82732,
       "y": 1330.09267
     },
     {
-      "id": "H1ItG8GOD78m",
+      "id": "rJQ7zoeFPX8Q",
       "type": "boundary",
       "boundaryType": "wall",
-      "start": "rJ1tIGOPXU7",
-      "end": "rJ8E8GOw7I7",
-      "arc": 0,
-      "angle": 1.5707963267948966,
-      "midPoint": {
-        "x": 719.37506,
-        "y": 1289.0078050000002
-      }
-    },
-    {
-      "id": "Sk77z8G_DmIm",
-      "type": "boundary",
-      "boundaryType": "wall",
-      "start": "rJ8E8GOw7I7",
-      "end": "HkPN8M_w7IX",
+      "start": "r18VjxtwQUQ",
+      "end": "ByDEsxKwQ87",
       "arc": 0,
       "angle": 0,
       "midPoint": {
@@ -52,17 +33,36 @@
       }
     },
     {
-      "id": "H1pzfUMuDQIQ",
+      "id": "HkpMMolYP7UX",
       "type": "boundary",
       "boundaryType": "wall",
-      "start": "BJ-EIzOD7UX",
-      "end": "H1fgIMuwX8Q",
+      "start": "rk-NoetPX8Q",
+      "end": "BkzeoxFDmLX",
       "arc": 0,
       "angle": 4.71238898038469,
       "midPoint": {
         "x": 716.82732,
         "y": 757.074425
       }
+    },
+    {
+      "id": "BkLYfiltP78m",
+      "type": "boundary",
+      "boundaryType": "wall",
+      "start": "HJyKsgKDQUX",
+      "end": "r18VjxtwQUQ",
+      "arc": 0,
+      "angle": 1.5707963267948966,
+      "midPoint": {
+        "x": 719.37506,
+        "y": 1289.0078050000002
+      }
+    },
+    {
+      "id": "r18VjxtwQUQ",
+      "type": "point",
+      "x": 719.37506,
+      "y": 1326.62046
     }
   ],
   "bbox": {

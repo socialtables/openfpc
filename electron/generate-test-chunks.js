@@ -79,7 +79,8 @@ module.exports = async function generateTestChunks ({
     preserveDrawingBuffer: true
   });
   renderer.setClearColor(new Color(1, 1, 1));
-  renderer.setPixelRatio(window.devicePixelRatio || 1);
+  renderer.setPixelRatio(1);
+  //renderer.setPixelRatio(window.devicePixelRatio || 1);
   renderer.setSize(imageChunkSize, imageChunkSize);
 
   for (let ci = 0; ci < chunks.length; ci++) {

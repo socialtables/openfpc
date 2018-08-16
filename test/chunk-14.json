@@ -1,23 +1,24 @@
 {
   "entities": [
     {
-      "id": "H1fgIMuwX8Q",
-      "type": "point",
-      "x": 716.82732,
-      "y": 184.05618
-    },
-    {
-      "id": "S1fVUGODXI7",
-      "type": "point",
-      "x": 719.37506,
-      "y": 187.5
-    },
-    {
-      "id": "SkAzMLMOv7UX",
+      "id": "S1fXzseKDX87",
       "type": "boundary",
       "boundaryType": "wall",
-      "start": "S1fVUGODXI7",
-      "end": "BJ5LLfOP7L7",
+      "start": "ByGVjetD78m",
+      "end": "ryyDjxYDXLX",
+      "arc": 0,
+      "angle": 1.5707963267948966,
+      "midPoint": {
+        "x": 719.37506,
+        "y": 227.314815
+      }
+    },
+    {
+      "id": "H1RGfsgFDXLQ",
+      "type": "boundary",
+      "boundaryType": "wall",
+      "start": "ByGVjetD78m",
+      "end": "B15IsgKPX8X",
       "arc": 0,
       "angle": 0,
       "midPoint": {
@@ -26,7 +27,7 @@
       }
     },
     {
-      "id": "BJn8X8G_w7I7",
+      "id": "BJ2UXjxYDX8Q",
       "type": "object",
       "objectType": "column",
       "x": 732,
@@ -40,24 +41,11 @@
       "attachedToRegions": []
     },
     {
-      "id": "S1M7GIzdDmLm",
+      "id": "S1DAbieFP7LX",
       "type": "boundary",
       "boundaryType": "wall",
-      "start": "S1fVUGODXI7",
-      "end": "SkJv8MuDQLQ",
-      "arc": 0,
-      "angle": 1.5707963267948966,
-      "midPoint": {
-        "x": 719.37506,
-        "y": 227.314815
-      }
-    },
-    {
-      "id": "SJPR-IzOD7U7",
-      "type": "boundary",
-      "boundaryType": "wall",
-      "start": "H1fgIMuwX8Q",
-      "end": "H17e8GOvmI7",
+      "start": "BkzeoxFDmLX",
+      "end": "B17eilKDX8Q",
       "arc": 0,
       "angle": 0,
       "midPoint": {
@@ -66,17 +54,29 @@
       }
     },
     {
-      "id": "H1pzfUMuDQIQ",
+      "id": "HkpMMolYP7UX",
       "type": "boundary",
       "boundaryType": "wall",
-      "start": "BJ-EIzOD7UX",
-      "end": "H1fgIMuwX8Q",
+      "start": "rk-NoetPX8Q",
+      "end": "BkzeoxFDmLX",
       "arc": 0,
       "angle": 4.71238898038469,
       "midPoint": {
         "x": 716.82732,
         "y": 757.074425
       }
+    },
+    {
+      "id": "ByGVjetD78m",
+      "type": "point",
+      "x": 719.37506,
+      "y": 187.5
+    },
+    {
+      "id": "BkzeoxFDmLX",
+      "type": "point",
+      "x": 716.82732,
+      "y": 184.05618
     }
   ],
   "bbox": {

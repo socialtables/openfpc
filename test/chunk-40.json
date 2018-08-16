@@ -1,43 +1,11 @@
 {
   "entities": [
     {
-      "id": "HJsGMIfOv7Im",
+      "id": "By2ffoeFDXUm",
       "type": "boundary",
       "boundaryType": "wall",
-      "start": "r114LM_DQ8m",
-      "end": "B1lNLMuPmUX",
-      "arc": 0,
-      "angle": 1.5707963267948966,
-      "midPoint": {
-        "x": 1325.33492,
-        "y": 1156.943665
-      }
-    },
-    {
-      "id": "SkEQGUG_D7UX",
-      "type": "boundary",
-      "boundaryType": "wall",
-      "start": "HkPN8M_w7IX",
-      "end": "HkNt8GODXUm",
-      "arc": 0,
-      "angle": 4.71238898038469,
-      "midPoint": {
-        "x": 1322.5578,
-        "y": 1286.92134
-      }
-    },
-    {
-      "id": "B1lNLMuPmUX",
-      "type": "point",
-      "x": 1325.33492,
-      "y": 1330.09267
-    },
-    {
-      "id": "ByhGzLzOw7IX",
-      "type": "boundary",
-      "boundaryType": "wall",
-      "start": "B1lNLMuPmUX",
-      "end": "BJ-EIzOD7UX",
+      "start": "rJeVjgFwmUQ",
+      "end": "rk-NoetPX8Q",
       "arc": 0,
       "angle": 3.141592653589793,
       "midPoint": {
@@ -46,7 +14,45 @@
       }
     },
     {
-      "id": "ryvU7Uz_vQI7",
+      "id": "ByDEsxKwQ87",
+      "type": "point",
+      "x": 1322.5578,
+      "y": 1326.62046
+    },
+    {
+      "id": "BJozzjeKPmU7",
+      "type": "boundary",
+      "boundaryType": "wall",
+      "start": "HkJVjxtPmUm",
+      "end": "rJeVjgFwmUQ",
+      "arc": 0,
+      "angle": 1.5707963267948966,
+      "midPoint": {
+        "x": 1325.33492,
+        "y": 1156.943665
+      }
+    },
+    {
+      "id": "rJeVjgFwmUQ",
+      "type": "point",
+      "x": 1325.33492,
+      "y": 1330.09267
+    },
+    {
+      "id": "rJQ7zoeFPX8Q",
+      "type": "boundary",
+      "boundaryType": "wall",
+      "start": "r18VjxtwQUQ",
+      "end": "ByDEsxKwQ87",
+      "arc": 0,
+      "angle": 0,
+      "midPoint": {
+        "x": 1020.96643,
+        "y": 1326.62046
+      }
+    },
+    {
+      "id": "HJv87oxFwQ8m",
       "type": "object",
       "objectType": "column",
       "x": 1315,
@@ -60,22 +66,16 @@
       "attachedToRegions": []
     },
     {
-      "id": "HkPN8M_w7IX",
-      "type": "point",
-      "x": 1322.5578,
-      "y": 1326.62046
-    },
-    {
-      "id": "Sk77z8G_DmIm",
+      "id": "SJNXzieKDXIX",
       "type": "boundary",
       "boundaryType": "wall",
-      "start": "rJ8E8GOw7I7",
-      "end": "HkPN8M_w7IX",
+      "start": "ByDEsxKwQ87",
+      "end": "HyVKsltw7Um",
       "arc": 0,
-      "angle": 0,
+      "angle": 4.71238898038469,
       "midPoint": {
-        "x": 1020.96643,
-        "y": 1326.62046
+        "x": 1322.5578,
+        "y": 1286.92134
       }
     }
   ],
