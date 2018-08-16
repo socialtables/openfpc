@@ -141,11 +141,11 @@ function init() {
         floorData: await parseSceneFile(fileContents),
         ...opts
       });
+      ipcRenderer.send("done-with-chunks", { messageId });
     }
     catch (err) {
       console.log("failed to generate chunks", err);
     }
-    ipcRenderer.send("done-with-chunks", { messageId });
   });
 }
 

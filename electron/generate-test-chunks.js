@@ -61,6 +61,11 @@ module.exports = async function generateTestChunks ({
   rsMaintainer.syncFloorState(floorScene);
   crMaintainer.syncFloorState(floorScene);
 
+  rsMaintainer.syncColorScheme({
+    wall: "#000000",
+    object: "#000000"
+  });
+
   const cr = crMaintainer.getResolver();
   const threeScene = rsMaintainer.getScene();
   const threeSceneBBox = new Box3().setFromObject(threeScene);
@@ -126,9 +131,17 @@ module.exports = async function generateTestChunks ({
       fs.writeFileSync(`${outputFile}-${ci}.png`, rendererBuff);
 
       // write chunk entities list
+      const chunkDescriptor = {
+        entities: entitiesInChunk,
+        bbox: {
+          min: { ...chunk.min },
+          max: { ...chunk.max }
+        }
+      };
+
       fs.writeFileSync(
-        `${outputFile}-${ci}.entities.json`,
-        JSON.stringify(entitiesInChunk, 0, 2)
+        `${outputFile}-${ci}.json`,
+        JSON.stringify(chunkDescriptor, 0, 2)
       );
 
     }

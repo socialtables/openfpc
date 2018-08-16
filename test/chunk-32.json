@@ -1,0 +1,184 @@
+{
+  "entities": [
+    {
+      "id": "SkecGLz_vQL7",
+      "type": "boundary",
+      "boundaryType": "wall",
+      "start": "HJIt8zuPQU7",
+      "end": "Sy_FUzuDQLm",
+      "arc": 0,
+      "angle": 4.71238898038469,
+      "midPoint": {
+        "x": 1253.34166,
+        "y": 1143.17049
+      }
+    },
+    {
+      "id": "BJRFzIMdPQUX",
+      "type": "boundary",
+      "boundaryType": "wall",
+      "start": "HJIt8zuPQU7",
+      "end": "rkwtIGOv7IX",
+      "arc": 0,
+      "angle": 0,
+      "midPoint": {
+        "x": 1287.94973,
+        "y": 1177.5463
+      }
+    },
+    {
+      "id": "rJ7cM8G_PmIm",
+      "type": "boundary",
+      "boundaryType": "wall",
+      "start": "Sy_FUzuDQLm",
+      "end": "BJ9KIGuDmIQ",
+      "arc": 0,
+      "angle": 4.71238898038469,
+      "midPoint": {
+        "x": 1253.34166,
+        "y": 1074.304535
+      }
+    },
+    {
+      "id": "HyntzUMdD7LX",
+      "type": "boundary",
+      "boundaryType": "wall",
+      "start": "HkNt8GODXUm",
+      "end": "S1rYIfdP78X",
+      "arc": 0,
+      "angle": 3.141592653589793,
+      "midPoint": {
+        "x": 1287.94973,
+        "y": 1247.22222
+      }
+    },
+    {
+      "id": "HJIt8zuPQU7",
+      "type": "point",
+      "x": 1253.34166,
+      "y": 1177.5463
+    },
+    {
+      "id": "S1rYIfdP78X",
+      "type": "point",
+      "x": 1253.34166,
+      "y": 1247.22222
+    },
+    {
+      "id": "BJ9KIGuDmIQ",
+      "type": "point",
+      "x": 1253.34166,
+      "y": 1039.81439
+    },
+    {
+      "id": "By6YfUMdDmLQ",
+      "type": "boundary",
+      "boundaryType": "wall",
+      "start": "S1rYIfdP78X",
+      "end": "HJIt8zuPQU7",
+      "arc": 0,
+      "angle": 4.71238898038469,
+      "midPoint": {
+        "x": 1253.34166,
+        "y": 1212.38426
+      }
+    },
+    {
+      "id": "B1AVXUMOP7LQ",
+      "type": "object",
+      "objectType": "door",
+      "x": 1253.34166,
+      "y": 1075,
+      "width": 20.16241949033884,
+      "height": 44.80537664519742,
+      "rotation": 90,
+      "isFlippedX": false,
+      "attachedToBoundary": "rJ7cM8G_PmIm",
+      "attachedToBoundaryPos": 0.48991791713256044,
+      "attachedToRegions": []
+    },
+    {
+      "id": "Sy_FUzuDQLm",
+      "type": "point",
+      "x": 1253.34166,
+      "y": 1108.79468
+    },
+    {
+      "id": "BJZqGLfuwX8X",
+      "type": "boundary",
+      "boundaryType": "wall",
+      "start": "Sy_FUzuDQLm",
+      "end": "BytYLGuDQUQ",
+      "arc": 0,
+      "angle": 0,
+      "midPoint": {
+        "x": 1287.94973,
+        "y": 1108.79468
+      }
+    },
+    {
+      "id": "B1LqzIzOPmU7",
+      "type": "boundary",
+      "boundaryType": "wall",
+      "start": "BJ9KIGuDmIQ",
+      "end": "Sknt8GOPQL7",
+      "arc": 0,
+      "angle": 4.71238898038469,
+      "midPoint": {
+        "x": 1253.34166,
+        "y": 1004.97664
+      }
+    },
+    {
+      "id": "r1eSQUGuwQLm",
+      "type": "object",
+      "objectType": "door",
+      "x": 1253.34166,
+      "y": 1213,
+      "width": 20.16241949033884,
+      "height": 44.80537664519742,
+      "rotation": 90,
+      "isFlippedX": false,
+      "attachedToBoundary": "By6YfUMdDmLQ",
+      "attachedToBoundaryPos": 0.4911628005773019,
+      "attachedToRegions": []
+    },
+    {
+      "id": "rJN5zLf_DmIQ",
+      "type": "boundary",
+      "boundaryType": "wall",
+      "start": "BJ9KIGuDmIQ",
+      "end": "HJiYIGdw78m",
+      "arc": 0,
+      "angle": 0,
+      "midPoint": {
+        "x": 1287.94973,
+        "y": 1039.81439
+      }
+    },
+    {
+      "id": "rkkrQ8fdwmIm",
+      "type": "object",
+      "objectType": "door",
+      "x": 1253.34166,
+      "y": 1143,
+      "width": 20.16241949033884,
+      "height": 44.80537664519742,
+      "rotation": 90,
+      "isFlippedX": false,
+      "attachedToBoundary": "SkecGLz_vQL7",
+      "attachedToBoundaryPos": 0.5024797961124403,
+      "attachedToRegions": []
+    }
+  ],
+  "bbox": {
+    "min": {
+      "x": 1024,
+      "y": 1024
+    },
+    "max": {
+      "x": 1280,
+      "y": 1280
+    }
+  }
+}

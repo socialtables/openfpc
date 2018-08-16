@@ -1,0 +1,188 @@
+{
+  "entities": [
+    {
+      "id": "Hym2-UzdD7LQ",
+      "type": "boundary",
+      "boundaryType": "wall",
+      "start": "BkajIMuDXUm",
+      "end": "H1hsLz_P78m",
+      "arc": 0,
+      "angle": 0,
+      "midPoint": {
+        "x": 1822.6308199999999,
+        "y": 1124.54168
+      }
+    },
+    {
+      "id": "B1iJmUMuvmI7",
+      "type": "object",
+      "objectType": "column",
+      "x": 1679,
+      "y": 1124,
+      "width": 16.802016241949033,
+      "height": 11.201344161299355,
+      "rotation": 0,
+      "isFlippedX": false,
+      "attachedToBoundary": null,
+      "attachedToBoundaryPos": 0,
+      "attachedToRegions": []
+    },
+    {
+      "id": "r1OffIfuvmL7",
+      "type": "boundary",
+      "boundaryType": "wall",
+      "start": "H13Q8zODQLX",
+      "end": "rJTmLM_wXU7",
+      "arc": 0,
+      "angle": 3.141592653589793,
+      "midPoint": {
+        "x": 1751.547665,
+        "y": 1130.79014
+      }
+    },
+    {
+      "id": "B15lXIGdD7UX",
+      "type": "object",
+      "objectType": "door",
+      "x": 1667.43291,
+      "y": 1106,
+      "width": 19.042285074208905,
+      "height": 44.80537664519742,
+      "rotation": 270,
+      "isFlippedX": true,
+      "attachedToBoundary": "SJi9MLzOP7IX",
+      "attachedToBoundaryPos": 0.8797353639394448,
+      "attachedToRegions": []
+    },
+    {
+      "id": "rkE2-UfOvmUQ",
+      "type": "boundary",
+      "boundaryType": "wall",
+      "start": "Hygi8zOvmIX",
+      "end": "BkajIMuDXUm",
+      "arc": 0,
+      "angle": 1.5707963267948966,
+      "midPoint": {
+        "x": 1746.23251,
+        "y": 1047.45468
+      }
+    },
+    {
+      "id": "B1FJmUf_wm8X",
+      "type": "object",
+      "objectType": "column",
+      "x": 1533,
+      "y": 1124,
+      "width": 16.802016241949033,
+      "height": 11.201344161299355,
+      "rotation": 0,
+      "isFlippedX": false,
+      "attachedToBoundary": null,
+      "attachedToBoundaryPos": 0,
+      "attachedToRegions": []
+    },
+    {
+      "id": "BkajIMuDXUm",
+      "type": "point",
+      "x": 1746.23251,
+      "y": 1124.54168
+    },
+    {
+      "id": "HkFe7IfuDmLm",
+      "type": "object",
+      "objectType": "door",
+      "x": 1746.23251,
+      "y": 1105,
+      "width": 19.042285074208905,
+      "height": 44.80537664519742,
+      "rotation": 90,
+      "isFlippedX": false,
+      "attachedToBoundary": "rkE2-UfOvmUQ",
+      "attachedToBoundaryPos": 0.8732491859846665,
+      "attachedToRegions": []
+    },
+    {
+      "id": "SkxcIGuwQ87",
+      "type": "point",
+      "x": 1667.43291,
+      "y": 1124.54168
+    },
+    {
+      "id": "SJi9MLzOP7IX",
+      "type": "boundary",
+      "boundaryType": "wall",
+      "start": "r1kc8zOwQU7",
+      "end": "SkxcIGuwQ87",
+      "arc": 0,
+      "angle": 1.5707963267948966,
+      "midPoint": {
+        "x": 1667.43291,
+        "y": 1047.45468
+      }
+    },
+    {
+      "id": "r12yXLzuv7UQ",
+      "type": "object",
+      "objectType": "column",
+      "x": 1755,
+      "y": 1123,
+      "width": 16.802016241949033,
+      "height": 11.201344161299355,
+      "rotation": 0,
+      "isFlippedX": false,
+      "attachedToBoundary": null,
+      "attachedToBoundaryPos": 0,
+      "attachedToRegions": []
+    },
+    {
+      "id": "rJDmMIzOD7I7",
+      "type": "boundary",
+      "boundaryType": "wall",
+      "start": "SJ5NIzuP7LX",
+      "end": "SkxcIGuwQ87",
+      "arc": 0,
+      "angle": 0,
+      "midPoint": {
+        "x": 1560.49831,
+        "y": 1124.54168
+      }
+    },
+    {
+      "id": "rJn5MLGODQ8X",
+      "type": "boundary",
+      "boundaryType": "wall",
+      "start": "SkxcIGuwQ87",
+      "end": "BkajIMuDXUm",
+      "arc": 0,
+      "angle": 0,
+      "midPoint": {
+        "x": 1706.8327100000001,
+        "y": 1124.54168
+      }
+    },
+    {
+      "id": "H19k78M_P7U7",
+      "type": "object",
+      "objectType": "column",
+      "x": 1607,
+      "y": 1123,
+      "width": 16.802016241949033,
+      "height": 11.201344161299355,
+      "rotation": 0,
+      "isFlippedX": false,
+      "attachedToBoundary": null,
+      "attachedToBoundaryPos": 0,
+      "attachedToRegions": []
+    }
+  ],
+  "bbox": {
+    "min": {
+      "x": 1536,
+      "y": 1024
+    },
+    "max": {
+      "x": 1792,
+      "y": 1280
+    }
+  }
+}
