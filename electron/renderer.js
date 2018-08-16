@@ -7,10 +7,10 @@ const React = require("react");
 const ReactDOM = require("react-dom");
 const App = require("../dist/index.js");
 const loadScene = require("./lib/loader");
+const genTestChunks = require("./generate-test-chunks");
 
 // stub out window env - would be good to remove this later
 window.ENV = window.ENV || {};
-// window.ENV.__DEV__ = true;
 
 // helper for parsing a scene
 function parseSceneFile (fileContents) {
@@ -127,6 +127,26 @@ function init() {
 
   // tell the main process we're ready for more events
   ipcRenderer.send("renderer-ready", true);
+
+  // if we're asked to render something, render something
+  ipcRenderer.on("generate-test-chunks", async (e, {
+    messageId,
+    fileContents,
+    ...opts
+  }) => {
+    ipcRenderer.send("ack", { messageId });
+    try {
+      await genTestChunks({
+        containerElement: document.getElementById("openfpc-view"),
+        floorData: await parseSceneFile(fileContents),
+        ...opts
+      });
+    }
+    catch (err) {
+      console.log("failed to generate chunks", err);
+    }
+    ipcRenderer.send("done-with-chunks", { messageId });
+  });
 }
 
 init();

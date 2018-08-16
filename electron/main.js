@@ -14,6 +14,7 @@ commander
 .arguments("[file]")
 .option("--dev", "open DevTools")
 .option("--display-only", "open in display-only mode")
+.option("--generate-test-chunks", "open in generative test mode")
 .option("--screenshot [file]", "screenshot to specified file")
 // commander won't d its action clause without a file argument
 .action((file, { dev }) => Object.assign(cmdArgs, { file, dev }));
@@ -24,12 +25,13 @@ commander.parse(process.argv);
 cmdArgs.dev = cmdArgs.dev || commander.dev;
 cmdArgs.displayOnly = cmdArgs.displayOnly || commander.displayOnly;
 cmdArgs.screenshot = cmdArgs.screenshot || commander.screenshot;
+cmdArgs.generateTestChunks = cmdArgs.generateTestChunks || commander.generateTestChunks;
 if (cmdArgs.screenshot === true) {
   cmdArgs.screenshot = "screenshot";
 }
 
 // loader for specified file
-function loadTargetFile(targetFileName) {
+function _loadLocalFile(targetFileName) {
   return new Promise((resolve) => {
     fs.readFile(targetFileName, (err, buff) => {
       if (err) {
@@ -51,12 +53,13 @@ function loadTargetFile(targetFileName) {
 let mainWindow;
 async function createWindow () {
 
-  // kick off loading he target file
+  // kick off loading the target file if specified
   let fileLoadStub;
   if (cmdArgs.file) {
-    fileLoadStub = loadTargetFile(cmdArgs.file);
+    fileLoadStub = _loadLocalFile(cmdArgs.file);
   }
 
+  // get ready to wait for the renderer to come online
   const windowLoadStub = new Promise((resolve) => {
     ipcMain.on("renderer-ready", (event, msg) => {
       resolve(msg || "renderer-ready");
@@ -72,7 +75,7 @@ async function createWindow () {
   mainWindow = new BrowserWindow({
     width: 1100,
     height: 700,
-    title: cmdArgs.file ? `OpenFPC - ${cmdArgs.file}` : "OpenFPC",
+    title: "FPSee",
     show: false
   });
 
@@ -116,20 +119,34 @@ async function createWindow () {
     await windowLoadStub;
 
     // configure and initialize
-    await sendMessageAndPromiseResponse("init-app", {
-      mode: cmdArgs.displayOnly ? "visualizer" : "editor"
-    });
+    let mode = "visualizer";
+    if (!cmdArgs.generateTestChunks) {
+      await sendMessageAndPromiseResponse("init-app", {
+        mode
+      });
+    }
 
     // display
     mainWindow.show();
 
     // load file
-    if (fileLoadStub) {
+    if (fileLoadStub && !cmdArgs.generateTestChunks) {
       const fileContents = await fileLoadStub;
       await sendMessageAndPromiseResponse("load-file", {
         fileContents,
         fileName: cmdArgs.file && path.basename(cmdArgs.file),
         filePath: cmdArgs.file
+      });
+    }
+
+    if (cmdArgs.generateTestChunks) {
+      const fileContents = fileLoadStub ? await fileLoadStub : null;
+      ipcMain.on("done-with-chunks", () => process.exit(0));
+      await sendMessageAndPromiseResponse("generate-test-chunks", {
+        fileContents,
+        outputFile: path.resolve(process.cwd(), "test", "chunk"),
+        spatialSize: 256,
+        imageSize: 256
       });
     }
   }

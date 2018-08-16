@@ -1,0 +1,80 @@
+[
+  {
+    "id": "rkfg26BPm87",
+    "type": "point",
+    "x": 716.82732,
+    "y": 184.05618
+  },
+  {
+    "id": "H1w0Wn6BPmUX",
+    "type": "boundary",
+    "boundaryType": "wall",
+    "start": "rkfg26BPm87",
+    "end": "HJXx36SPm8Q",
+    "arc": 0,
+    "angle": 0,
+    "midPoint": {
+      "x": 1020.380105,
+      "y": 184.05618
+    }
+  },
+  {
+    "id": "S1GV2pSwQIm",
+    "type": "point",
+    "x": 719.37506,
+    "y": 187.5
+  },
+  {
+    "id": "rJMmM3aHvXLm",
+    "type": "boundary",
+    "boundaryType": "wall",
+    "start": "S1GV2pSwQIm",
+    "end": "rJkD2pSP7Im",
+    "arc": 0,
+    "angle": 1.5707963267948966,
+    "midPoint": {
+      "x": 719.37506,
+      "y": 227.314815
+    }
+  },
+  {
+    "id": "H1n8X2aSP7Im",
+    "type": "object",
+    "objectType": "column",
+    "x": 732,
+    "y": 192,
+    "width": 13.441612993559227,
+    "height": 14.001680201624195,
+    "rotation": 0,
+    "isFlippedX": false,
+    "attachedToBoundary": null,
+    "attachedToBoundaryPos": 0,
+    "attachedToRegions": []
+  },
+  {
+    "id": "SypzG2pBPmIm",
+    "type": "boundary",
+    "boundaryType": "wall",
+    "start": "rkWV3pHPQLX",
+    "end": "rkfg26BPm87",
+    "arc": 0,
+    "angle": 4.71238898038469,
+    "midPoint": {
+      "x": 716.82732,
+      "y": 757.074425
+    }
+  },
+  {
+    "id": "B10fzharDmI7",
+    "type": "boundary",
+    "boundaryType": "wall",
+    "start": "S1GV2pSwQIm",
+    "end": "rJqInprPQLQ",
+    "arc": 0,
+    "angle": 0,
+    "midPoint": {
+      "x": 980.4594400000001,
+      "y": 187.5
+    }
+  }
+]

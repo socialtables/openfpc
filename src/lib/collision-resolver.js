@@ -278,7 +278,7 @@ export default class CollisionResolver {
       this.idToEntity.delete(id);
     }
   }
-  resolveSelectionBox (bbox) {
+  resolveSelectionBox (bbox, acceptPartialEnclosure = false) {
     const qtBBox = {
       x: bbox.min.x,
       y: bbox.min.y,
@@ -296,11 +296,11 @@ export default class CollisionResolver {
       const restOfEntity = this.idToEntity.get(hit.id);
       if (Array.isArray(restOfEntity)) {
         const uncontained = restOfEntity.find(se => !se.isEnclosed(bbox));
-        if (!uncontained) {
+        if (!uncontained || acceptPartialEnclosure) {
           hits.push(hit);
         }
       }
-      if (hit.isEnclosed(bbox)) {
+      else if (hit.isEnclosed(bbox) || acceptPartialEnclosure) {
         hits.push(hit);
       }
     });

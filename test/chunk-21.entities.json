@@ -1,0 +1,121 @@
+[
+  {
+    "id": "By2I2pHP78X",
+    "type": "point",
+    "x": 933.016,
+    "y": 230.32407
+  },
+  {
+    "id": "H1w0Wn6BPmUX",
+    "type": "boundary",
+    "boundaryType": "wall",
+    "start": "rkfg26BPm87",
+    "end": "HJXx36SPm8Q",
+    "arc": 0,
+    "angle": 0,
+    "midPoint": {
+      "x": 1020.380105,
+      "y": 184.05618
+    }
+  },
+  {
+    "id": "r1H8GhTHP7Lm",
+    "type": "boundary",
+    "boundaryType": "wall",
+    "start": "S1sUh6HDXI7",
+    "end": "By2I2pHP78X",
+    "arc": 0,
+    "angle": 0,
+    "midPoint": {
+      "x": 881.2828099999999,
+      "y": 230.32407
+    }
+  },
+  {
+    "id": "ryULfhTSw78m",
+    "type": "boundary",
+    "boundaryType": "wall",
+    "start": "By2I2pHP78X",
+    "end": "r1TI3THwQUQ",
+    "arc": 0,
+    "angle": 1.5707963267948966,
+    "midPoint": {
+      "x": 933.016,
+      "y": 311.92262
+    }
+  },
+  {
+    "id": "HkOLfhpBv787",
+    "type": "boundary",
+    "boundaryType": "wall",
+    "start": "rJCL3TrvXUm",
+    "end": "S1sUh6HDXI7",
+    "arc": 0,
+    "angle": 4.71238898038469,
+    "midPoint": {
+      "x": 829.54962,
+      "y": 311.92262
+    }
+  },
+  {
+    "id": "ry-fXn6SDXI7",
+    "type": "object",
+    "objectType": "door",
+    "x": 882,
+    "y": 230.32407,
+    "width": 19.042285074208905,
+    "height": 44.80537664519742,
+    "rotation": 180,
+    "isFlippedX": false,
+    "attachedToBoundary": "r1H8GhTHP7Lm",
+    "attachedToBoundaryPos": 0.5069316235863284,
+    "attachedToRegions": []
+  },
+  {
+    "id": "B10fzharDmI7",
+    "type": "boundary",
+    "boundaryType": "wall",
+    "start": "S1GV2pSwQIm",
+    "end": "rJqInprPQLQ",
+    "arc": 0,
+    "angle": 0,
+    "midPoint": {
+      "x": 980.4594400000001,
+      "y": 187.5
+    }
+  },
+  {
+    "id": "SyiIm26Bw7LQ",
+    "type": "object",
+    "objectType": "column",
+    "x": 877,
+    "y": 192,
+    "width": 13.441612993559227,
+    "height": 14.001680201624195,
+    "rotation": 0,
+    "isFlippedX": false,
+    "attachedToBoundary": null,
+    "attachedToBoundaryPos": 0,
+    "attachedToRegions": []
+  },
+  {
+    "id": "S1sUh6HDXI7",
+    "type": "point",
+    "x": 829.54962,
+    "y": 230.32407
+  },
+  {
+    "id": "Hy58m2aBvQIQ",
+    "type": "object",
+    "objectType": "column",
+    "x": 1022,
+    "y": 191,
+    "width": 13.441612993559227,
+    "height": 14.001680201624195,
+    "rotation": 0,
+    "isFlippedX": false,
+    "attachedToBoundary": null,
+    "attachedToBoundaryPos": 0,
+    "attachedToRegions": []
+  }
+]
