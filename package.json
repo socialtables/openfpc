@@ -30,6 +30,7 @@
     "prepublish": "NODE_ENV=production npm run build"
   },
   "dependencies": {
+    "@tensorflow/tfjs": "^0.12.5",
     "ajv": "^6.5.0",
     "bluebird": "^3.5.1",
     "classnames": "^2.2.5",
