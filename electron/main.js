@@ -62,7 +62,10 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     width: 1100,
     height: 700,
-    title: cmdArgs.file ? `OpenFPC - ${cmdArgs.file}` : "OpenFPC"
+    title: cmdArgs.file ? `OpenFPC - ${cmdArgs.file}` : "OpenFPC",
+    webPreferences: {
+      nodeIntegration: true
+    }
   });
 
   mainWindow.loadURL(url.format({
