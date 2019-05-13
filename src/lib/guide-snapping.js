@@ -1,7 +1,7 @@
 import debugDependency from "debug";
 import { Vector2, Vector3, Ray, Plane } from "three";
 
-const debug = debugDependency("openfpc:editor:lib:guide-snapping");
+const debug = debugDependency("st:fpc4:editor:lib:guide-snapping");
 
 /**
  * Given a floor's entity map, produce guides
@@ -67,8 +67,96 @@ function generateSnapGuides (entities) {
         tangent,
         boundaryLength
       });
+      const normal = new Vector2(-tangent.y, tangent.x);
+      guides.push({
+        entityId,
+        type: "boundaryNormal",
+        pos: startPos,
+        tangent: normal
+      });
+      guides.push({
+        entityId,
+        type: "boundaryNormal",
+        pos: endPos,
+        tangent: normal
+      });
     }
   });
+  return guides;
+}
+
+/**
+ * Given a floor's entity map, a start point, and an optional boundary, produce
+ * guides for use as snapping constraints
+ */
+function generatePointConstraintSnapGuides (entities, point, boundary = null) {
+  const guides = [];
+  const entityPos = point.toVector2();
+  const pointId = point.get("id");
+  guides.push({
+    entityId: pointId,
+    type: "grid",
+    pos: entityPos,
+    tangent: new Vector2(0, 1)
+  });
+  guides.push({
+    entityId: pointId,
+    type: "grid",
+    pos: entityPos,
+    tangent: new Vector2(1, 0)
+  });
+  if (boundary) {
+    const startPoint = entities.get(boundary.get("start"));
+    const endPoint = entities.get(boundary.get("end"));
+    if (!startPoint || !endPoint) {
+      return guides;
+    }
+    const startPos = startPoint.toVector2();
+    const endPos = endPoint.toVector2();
+    const tangent = endPos.clone().sub(startPos);
+    tangent.normalize();
+    const normal = new Vector2(-tangent.y, tangent.x);
+    guides.push({
+      entityId: pointId,
+      type: "boundaryNormal",
+      pos: entityPos,
+      tangent: normal
+    });
+  }
+  if (entities.get(pointId)) {
+    const connectedBoundaries = entities.filter(e => (
+      e.get("type") === "boundary" &&
+      !e.get("arc") &&
+      (e.get("start") === pointId || e.get("end") === pointId)
+    ));
+    connectedBoundaries.forEach(entity => {
+      const entityId = entity.get("id");
+      const startPoint = entities.get(entity.get("start"));
+      const endPoint = entities.get(entity.get("end"));
+      if (!startPoint || !endPoint) {
+        return;
+      }
+      const startPos = startPoint.toVector2();
+      const endPos = endPoint.toVector2();
+      const tangent = endPos.clone().sub(startPos);
+      const boundaryLength = tangent.length();
+      tangent.normalize();
+      const normal = new Vector2(-tangent.y, tangent.x);
+      guides.push({
+        entityId,
+        type: "boundary",
+        pos: entityPos,
+        tangent,
+        boundaryLength
+      });
+      guides.push({
+        entityId,
+        type: "boundaryNormal",
+        pos: entityPos,
+        tangent: normal
+      });
+    });
+  }
   return guides;
 }
 
@@ -99,6 +187,10 @@ function getBestGuideSnap (guides, position) {
         distanceAlongTangent * -1,
         distanceAlongTangent - guide.boundaryLength
       ));
+    }
+    else if (guide.type === "boundaryNormal") {
+      offsetCost *= 0.5;
+      offsetCost += Math.abs(distanceAlongTangent) * 0.01;
     }
     if (offsetCost < bestGuideCost) {
       bestGuideCost = offsetCost;
@@ -170,6 +262,10 @@ function getBestGuideSnapConstrained (guides, position, tangent) {
         distanceAlongTangent - guide.boundaryLength
       ));
     }
+    else if (guide.type === "boundaryNormal") {
+      offsetCost *= 0.5;
+      offsetCost += Math.abs(distanceAlongTangent) * 0.01;
+    }
     if (offsetCost < bestGuideCost) {
       bestGuideCost = offsetCost;
       bestGuide = guide;
@@ -187,17 +283,47 @@ export default class GuideSnapper {
     this.floorEntities = null;
     this.guides = null;
   }
-  getBestSnap (floor, position, maxDist = 20) {
+
+  /**
+   * General-purpose guide snapping
+   */
+  getBestSnap (floor, position, maxDist = 20, snapToBoundary = null) {
     const floorEntities = floor.get("entities");
     if (this.floorEntities !== floorEntities) {
       debug("generating snapping guides");
       this.floorEntities = floorEntities;
       this.guides = generateSnapGuides(floorEntities);
     }
-    const [stage1Guide, stage1Offset] = getBestGuideSnap(
-      this.guides,
-      position
-    );
+
+    let stage1Guide, stage1Offset;
+
+    // if we passed in a boundary, treat it as the primary snap target
+    if (snapToBoundary) {
+      const [
+        snapBoundPosition,
+        snapBoundNormal
+      ] = snapToBoundary.getAlignmentInfo(
+        floorEntities,
+        new Vector2().copy(position)
+      );
+      stage1Guide = {
+        entityId: snapToBoundary.id,
+        type: "boundary",
+        pos: snapBoundPosition,
+        tangent: new Vector2(-snapBoundNormal.y, snapBoundNormal.x),
+        boundaryLength: snapToBoundary.getLength(floorEntities)
+      };
+      stage1Offset = new Vector2().add(position).sub(snapBoundPosition);
+    }
+    // otherwise, pick a snap target
+    else {
+      const bestGuideAndOffset = getBestGuideSnap(
+        this.guides,
+        position
+      );
+      stage1Guide = bestGuideAndOffset[0];
+      stage1Offset = bestGuideAndOffset[1];
+    }
     if (!stage1Guide) {
       return [];
     }
@@ -218,5 +344,45 @@ export default class GuideSnapper {
       return [[stage1Guide], stage1Offset, stage1Position];
     }
     return [];
+  }
+
+  /**
+   * Constrained snapping - forces constraint to a snap line and does not snap
+   * to faraway objects, only vectors relative to the point
+   */
+  getPointConstrainedSnap (floor, startPoint, startBoundary = null, position, snapToBoundary = null) {
+    const floorEntities = floor.get("entities");
+    const guides = generatePointConstraintSnapGuides(floorEntities, startPoint, startBoundary);
+
+    if (snapToBoundary) {
+      const [
+        snapBoundPosition,
+        snapBoundNormal
+      ] = snapToBoundary.getAlignmentInfo(
+        floorEntities,
+        new Vector2().copy(position)
+      );
+      const stage1Guide = {
+        entityId: snapToBoundary.id,
+        type: "boundary",
+        pos: snapBoundPosition,
+        tangent: new Vector2(-snapBoundNormal.y, snapBoundNormal.x),
+        boundaryLength: snapToBoundary.getLength(floorEntities)
+      };
+      const stage1Offset = new Vector2().add(position).sub(snapBoundPosition);
+      const stage1Position = position.clone().sub(stage1Offset);
+      const [stage2Guide, stage2Offset] = getBestGuideSnapConstrained(
+        guides,
+        stage1Position,
+        stage1Guide.tangent
+      );
+      const stage2Position = stage1Position.clone().sub(stage2Offset);
+      stage2Offset.add(stage1Offset);
+      return [[stage1Guide, stage2Guide], stage2Offset, stage2Position];
+    }
+
+    const [guide, offset] = getBestGuideSnap(guides, position);
+    return [[guide], offset, position.clone().sub(offset)];
+
   }
 }

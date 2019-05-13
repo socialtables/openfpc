@@ -50,6 +50,7 @@ class AddBoundaryViewportRaw extends Component {
       dragging: false,
       dragStartLocation: null,
       pendingStartPoint: null,
+      pendingStartSnap: null,
       pendingEndPoint: null,
       pendingEndSnap: null,
       pendingBoundary: null,
@@ -86,6 +87,7 @@ class AddBoundaryViewportRaw extends Component {
   onViewportMouseDown({ getTargetEntity, cursorPosition3D, viewport }) {
     let dragStartLocation;
     let pendingStartPoint = null;
+    let pendingStartSnap = null;
 
     const dragStartEntity = getTargetEntity();
     if (dragStartEntity && dragStartEntity.get("type") === "point") {
@@ -93,28 +95,28 @@ class AddBoundaryViewportRaw extends Component {
       dragStartLocation = dragStartEntity.toVector3();
     }
     else {
-      const { floor, enableSnapGuides } = viewport.props;
+      dragStartLocation = cursorPosition3D;
       pendingStartPoint = new Point({
         x: cursorPosition3D.x,
         y: cursorPosition3D.y
       });
-      dragStartLocation = cursorPosition3D;
+
       // snap start of new boundaries
-      if (enableSnapGuides) {
-        const snapRes = this.guideSnapper.getBestSnap(floor, cursorPosition3D);
-        const snapPosition = snapRes[2];
-        if (snapPosition) {
-          pendingStartPoint = pendingStartPoint.merge({
-            x: snapPosition.x,
-            y: snapPosition.y
-          });
-        }
+      const [snapPosition, snapEntity] = this._resolveHybridSnap(viewport, cursorPosition3D);
+      if (snapPosition) {
+        pendingStartPoint = pendingStartPoint.merge({
+          x: snapPosition.x,
+          y: snapPosition.y
+        });
+        pendingStartSnap = snapEntity;
       }
     }
+
     this.setState({
       dragging: false,
       dragStartLocation,
       pendingStartPoint,
+      pendingStartSnap,
       pendingEndPoint: null,
       pendingEndSnap: null
     });
@@ -127,24 +129,14 @@ class AddBoundaryViewportRaw extends Component {
     let {
       dragging,
       pendingStartPoint,
+      pendingStartSnap,
       pendingEndPoint,
       pendingBoundary,
       pendingEndSnap,
-      shiftDown,
-      dragStartLocation
+      shiftDown
     } = this.state;
 
-    let pos3 = cursorPosition3D;
-    if (shiftDown) {
-      const dragDelta = pos3.clone().sub(dragStartLocation);
-      if (Math.abs(dragDelta.x) > Math.abs(dragDelta.y)) {
-        pos3 = pos3.clone().setY(dragStartLocation.y);
-      }
-      else {
-        pos3 = pos3.clone().setX(dragStartLocation.x);
-      }
-    }
-
+    const pos3 = cursorPosition3D;
     if (!dragging) {
       pendingEndPoint = new Point({
         x: pos3.x,
@@ -163,38 +155,15 @@ class AddBoundaryViewportRaw extends Component {
       });
     }
 
-    let snapGuides = null;
-    const [snapEntity, snapPosition] = viewport._resolveEntitySnap({
-      position: pos3,
-      snapBoundaries: true,
-      snapPoints: true,
-      pointBias: 2
-    });
-
-    if (snapEntity) {
-      pendingEndSnap = snapEntity;
+    const constrainToPoint = shiftDown ? pendingStartPoint : null;
+    const [snapPosition, snapEntity, snapGuides] = this._resolveHybridSnap(viewport, cursorPosition3D, constrainToPoint, pendingStartSnap);
+    if (snapPosition) {
       pendingEndPoint = pendingEndPoint.merge({
         x: snapPosition.x,
         y: snapPosition.y
       });
     }
-    else {
-      pendingEndSnap = null;
-
-      // fall back to guide-based snapping
-      const { floor, enableSnapGuides } = viewport.props;
-      if (enableSnapGuides) {
-        const snapRes = this.guideSnapper.getBestSnap(floor, pos3);
-        const snapPosition = snapRes[2];
-        if (snapPosition) {
-          snapGuides = snapRes[0];
-          pendingEndPoint = pendingEndPoint.merge({
-            x: snapPosition.x,
-            y: snapPosition.y
-          });
-        }
-      }
-    }
+    pendingEndSnap = snapEntity;
 
     this.setState ({
       dragging: true,
@@ -217,11 +186,13 @@ class AddBoundaryViewportRaw extends Component {
     const {
       dispatch,
       floor,
-      floorEntities
+      floorEntities,
+      boundaryType
     } = this.props;
     const {
       dragging,
       pendingStartPoint,
+      pendingStartSnap,
       pendingEndPoint,
       pendingEndSnap
     } = this.state;
@@ -229,75 +200,152 @@ class AddBoundaryViewportRaw extends Component {
       pendingBoundary
     } = this.state;
 
-    // if dragging and snapping, try to snap boundary
-    if (dragging && pendingEndSnap && (pendingEndSnap.get("type") === "point")) {
-      pendingBoundary = pendingBoundary.reassignEndpoints(null, pendingEndSnap.get("id"));
-      if (floorEntities.get(pendingStartPoint.get("id"))) {
-        const pStart = pendingBoundary.get("start");
-        const pEnd = pendingBoundary.get("end");
-        const extantFlatBoundary = floorEntities
-        .valueSeq()
-        .filter(e => {
-          if (e.get("type") === "boundary") {
-            const eStart = e.get("start");
-            const eEnd = e.get("end");
-            if (
-              ((eStart === pStart) && (eEnd === pEnd)) ||
-                ((eStart === pEnd) && (eEnd === pStart))
-            ) {
-              return !e.get("arc");
-            }
-          }
-          return false;
-        }).first();
-        if (!extantFlatBoundary) {
-          dispatch(applyPendingUpdate(_constructEntityMap([
-            pendingBoundary
-          ])));
-        }
-        else {
-          dispatch(updatePendingEntities(null));
-        }
+    // build working entity map
+    let workingEntities = floorEntities.set(pendingStartPoint.get("id"), pendingStartPoint);
+    if (pendingEndPoint) {
+      workingEntities = workingEntities.set(pendingEndPoint.get("id"), pendingEndPoint);
+    }
+    if (pendingBoundary) {
+      workingEntities = workingEntities.set(pendingBoundary.get("id"), pendingBoundary);
+    }
+
+    // get click-only logic out of the way first
+    if (!dragging) {
+      // segment bisection
+      if (pendingStartSnap && pendingStartSnap.get("type") === "boundary") {
+        const [boundA, boundB] = pendingStartSnap.splitAtPoint(workingEntities, pendingStartPoint);
+        dispatch(applyPendingUpdate(
+          _constructEntityMap([pendingStartPoint, boundA, boundB]),
+          new Set([pendingStartSnap.get("id")])
+        ));
       }
-      else {
+      // free-floating points in space
+      else if (pendingStartPoint && !floorEntities.get(pendingStartPoint.get("id"))) {
         dispatch(applyPendingUpdate(_constructEntityMap([
-          pendingStartPoint,
-          pendingBoundary
+          pendingStartPoint
         ])));
       }
+      this._clearDragState();
+      return;
     }
-    else if (dragging && pendingEndSnap && (pendingEndSnap.get("type") === "boundary")) {
-      const splitBoundUpdates = floor.getSplitBoundaryUpdates(
-        pendingEndSnap,
-        pendingEndPoint
-      );
-      const removeIDs = new Set([pendingEndSnap.get("id")]);
+
+    // boundary-over-boundary sub-section case
+    if (
+      pendingStartSnap &&
+      pendingEndSnap &&
+      pendingStartSnap.get("type") === "boundary" &&
+      pendingStartSnap === pendingEndSnap
+    ) {
+      // slice the target boundary into three subsections
+      const [splitBoundA, splitBoundB] = pendingStartSnap.splitAtPoint(workingEntities, pendingStartPoint);
+      const [splitAA, splitAB, biasA] = splitBoundA.splitAtPoint(workingEntities, pendingEndPoint);
+      let newBoundaries;
+      if (biasA > 1 || biasA < 0) {
+        const [splitBA, splitBB] = splitBoundB.splitAtPoint(workingEntities, pendingEndPoint);
+        newBoundaries = [splitBoundA, splitBA, splitBB];
+      }
+      else {
+        newBoundaries = [splitBoundB, splitAA, splitAB];
+      }
+      // adjust the type of the center boundary
+      const startPoint2 = pendingStartPoint.toVector2();
+      const endPoint2 = pendingEndPoint.toVector2();
+      const midPoint = startPoint2.add(endPoint2).multiplyScalar(0.5);
+      // handle arcs by bridging them with new boundaries
+      if (pendingStartSnap.get("arc")) {
+        newBoundaries.push(pendingBoundary);
+      }
+      // otherwise alter the type of the boundary in the center after split
+      else {
+        newBoundaries = newBoundaries.map(b => {
+          const alignmentInfo = b.getAlignmentInfo(workingEntities, midPoint);
+          const bias = alignmentInfo[2];
+          if (bias >= 0 && bias <=1) {
+            return b.set("boundaryType", boundaryType);
+          }
+          return b;
+        });
+      }
+      // add new boundaries, remove the old
       dispatch(applyPendingUpdate(
-        splitBoundUpdates.merge(_constructEntityMap([
+        _constructEntityMap([
           pendingStartPoint,
           pendingEndPoint,
-          pendingBoundary
-        ])),
-        removeIDs
+          ...newBoundaries
+        ]),
+        new Set([pendingStartSnap.get("id")])
       ));
+      this._clearDragState();
+      return;
     }
-    // if otherwise dragging, no need to snap
-    else if (dragging) {
-      dispatch(applyPendingUpdate(_constructEntityMap([
-        pendingStartPoint,
-        pendingEndPoint,
-        pendingBoundary
-      ])));
+
+    const pointsToCreate = [];
+
+    // handle start point, end point
+    if (!floorEntities.get(pendingStartPoint.get("id"))) {
+      pointsToCreate.push(pendingStartPoint);
     }
-    // if not, make point
-    else if (pendingStartPoint && !floorEntities.get(pendingStartPoint.get("id"))) {
-      dispatch(applyPendingUpdate(_constructEntityMap([
+
+    if (pendingEndSnap && pendingEndSnap.get("type") === "point") {
+      pendingBoundary = pendingBoundary.reassignEndpoints(null, pendingEndSnap.get("id"));
+      // check for cases where a user has drawn one boundary over another
+      const pStart = pendingBoundary.get("start");
+      const pEnd = pendingBoundary.get("end");
+      const extantFlatBoundary = floorEntities.valueSeq().filter(e => {
+        if (e.get("type") === "boundary") {
+          const eStart = e.get("start");
+          const eEnd = e.get("end");
+          if (
+            ((eStart === pStart) && (eEnd === pEnd)) ||
+              ((eStart === pEnd) && (eEnd === pStart))
+          ) {
+            return !e.get("arc");
+          }
+        }
+        return false;
+      }).first();
+      if (extantFlatBoundary) {
+        dispatch(applyPendingUpdate(new Map()));
+        this._clearDragState();
+        return;
+      }
+    }
+    else {
+      pointsToCreate.push(pendingEndPoint);
+    }
+
+    // handle bisection cases
+    let splitBoundUpdates = new Map();
+    let boundIdsToRemove = new Set();
+    if (pendingStartSnap && pendingStartSnap.get("type") === "boundary") {
+      splitBoundUpdates = splitBoundUpdates.merge(floor.getSplitBoundaryUpdates(
+        pendingStartSnap,
         pendingStartPoint
-      ])));
+      ));
+      boundIdsToRemove = boundIdsToRemove.add(pendingStartSnap.get("id"));
     }
+
+    if (pendingEndSnap && pendingEndSnap.get("type") === "boundary") {
+      splitBoundUpdates = splitBoundUpdates.merge(floor.getSplitBoundaryUpdates(
+        pendingEndSnap,
+        pendingEndPoint
+      ));
+      boundIdsToRemove = boundIdsToRemove.add(pendingEndSnap.get("id"));
+    }
+
+    dispatch(applyPendingUpdate(
+      splitBoundUpdates.merge(_constructEntityMap(pointsToCreate.concat(pendingBoundary))),
+      boundIdsToRemove
+    ));
+
+    this._clearDragState();
+  }
+  // helper to reset drag state to simplify the above method
+  _clearDragState () {
     this.setState({
       dragging: false,
       pendingStartPoint: null,
+      pendingStartSnap: null,
       pendingEndPoint: null,
       pendingEndSnap: null,
       pendingBoundary: null
@@ -320,6 +368,45 @@ class AddBoundaryViewportRaw extends Component {
     default:
       break;
     }
+  }
+  _resolveHybridSnap (viewport, position, constrainToPoint = null, fromBoundary = null) {
+    const { floor, enableSnapGuides } = viewport.props;
+    let snapGuides = null;
+    let [snapEntity, snapPosition] = viewport._resolveEntitySnap({
+      position: position,
+      snapBoundaries: true,
+      snapPoints: true,
+      pointBias: 2
+    });
+
+    // if we're holding shift and want immediate point guides, do that
+    if (constrainToPoint) {
+      let guideSnapEntity = null;
+      if (snapEntity && snapEntity.get("type") === "boundary") {
+        guideSnapEntity = snapEntity;
+      }
+      const guideSnapRes = this.guideSnapper.getPointConstrainedSnap(floor, constrainToPoint, fromBoundary, position, guideSnapEntity);
+      const guideSnapPosition = guideSnapRes[2];
+      if (guideSnapPosition) {
+        snapGuides = guideSnapRes[0];
+        snapPosition = guideSnapPosition;
+      }
+    }
+
+    // if we have snap guides + a snap boundary, combine them
+    if (enableSnapGuides) {
+      let guideSnapEntity = null;
+      if (snapEntity && snapEntity.get("type") === "boundary") {
+        guideSnapEntity = snapEntity;
+      }
+      const guideSnapRes = this.guideSnapper.getBestSnap(floor, position, 20, guideSnapEntity);
+      const guideSnapPosition = guideSnapRes[2];
+      if (guideSnapPosition) {
+        snapGuides = guideSnapRes[0];
+        snapPosition = guideSnapPosition;
+      }
+    }
+    return [snapPosition, snapEntity, snapGuides];
   }
 }
 

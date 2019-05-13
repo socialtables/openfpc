@@ -130,8 +130,12 @@ export default class Boundary extends Record ({
     const normal = new Vector2(-endDelta.y, endDelta.x).normalize();
     const dist = posDelta.dot(normal);
     const closestPos = pos.clone().sub(normal.clone().multiplyScalar(dist));
-    const distAlongTangent = closestPos.clone().sub(startPos).length() /
-      endDelta.length();
+    const tangentVector = endDelta.clone().normalize();
+    const endDistance = endDelta.length();
+    const distAlongTangent = closestPos
+    .clone()
+    .sub(startPos)
+    .dot(tangentVector) / endDistance;
     return [closestPos, normal, distAlongTangent];
   }
   getPositionAlongBoundary (pointMap, bias = 0.5) {
