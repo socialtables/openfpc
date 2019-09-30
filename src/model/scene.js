@@ -7,7 +7,14 @@ import {
   METRIC,
   IMPERIAL_METRIC_MULTIPLIER
 } from "../constants";
-import { Point, Boundary, PermanentObject, Region, CanvasBorder } from "./";
+import {
+  Point,
+  Boundary,
+  PermanentObject,
+  Region,
+  CanvasBorder,
+  BackgroundImage
+} from "./";
 
 // scene graph
 export default class Scene extends Record({
@@ -27,12 +34,14 @@ export default class Scene extends Record({
     boundaries = [],
     objects = [],
     regions = [],
+    backgroundImages = [],
     withErrors = false
   } = {}) {
     const newPoints = {};
     const newBoundaries = {};
     const newObjects = {};
     const newRegions = {};
+    const newBackgroundImages = {};
     const errors = [];
     const oldPointIDsToNew = {};
     const oldBoundIDsToNew = {};
@@ -131,6 +140,12 @@ export default class Scene extends Record({
       }
     });
 
+    Object.keys(backgroundImages).forEach(oldID => {
+      const bgOld = backgroundImages[oldID];
+      const oNew = BackgroundImage.fromJS(bgOld);
+      newBackgroundImages[oNew.get("id")] = oNew;
+    });
+
     const canvasBorders = {};
     const cb = CanvasBorder.fromJS();
     canvasBorders[cb.get("id")] = cb;
@@ -141,6 +156,7 @@ export default class Scene extends Record({
       newBoundaries,
       newObjects,
       newRegions,
+      newBackgroundImages,
       canvasBorders
     );
 

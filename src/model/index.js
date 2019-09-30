@@ -1,3 +1,4 @@
+export { default as BackgroundImage } from "./background-image";
 export { default as Boundary } from "./boundary";
 export { default as CanvasBorder } from "./canvas-border";
 export { default as PermanentObject } from "./permanent-object";

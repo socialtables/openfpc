@@ -8,6 +8,7 @@ export const PAN_TOOL_NAME = "PAN";
 export const ARC_TOOL_NAME = "ARC";
 export const ADD_BOUNDARY_TOOL_NAME = "ADD_BOUNDARY";
 export const ADD_OBJECT_TOOL_NAME = "ADD_OBJECT";
+export const TRACE_LINES_TOOL_NAME = "TRACE_LINES";
 
 // boundary tools
 export const DIMENSION_LINE_TOOL_NAME = "dimension-line";

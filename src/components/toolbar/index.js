@@ -44,6 +44,7 @@ function Toolbar ({
     <div className="toolbar__group">
       <SnapTools />
       { toolButtons[TOOLS.ARC_TOOL_NAME] }
+      { toolButtons[TOOLS.TRACE_LINES_TOOL_NAME] }
     </div>
     <ReactTooltip
       class="toolbar__tooltip"
