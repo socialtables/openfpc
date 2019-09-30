@@ -1,5 +1,5 @@
-/* eslint-disable no-use-before-define */
-const debug = require("debug")("openfpc:floor-geometry:room-traversal");
+"use strict";
+const debug = require("debug")("st:floor-geometry:room-traversal");
 const { Vector2, Box2 } = require("three");
 const { interpolateArcPointsByConstraints, computeArcRadius, computeChordLengthFromRadiusAndAngle } = require("./arcs");
 const EnclosureTree = require("./enclosure-tree");
@@ -17,19 +17,26 @@ const ARC_OVERLAP_ERROR_THRESHOLD = Math.PI / 4;
 var ARC_INTERPOLATION_PRECISION = Math.PI / 32;
 
 module.exports = {
+  // public exports
   resolveRooms, // room tracing for floors
   combineRooms, // room merges for bookable rooms
-  setArcInterpolationPrecision // arc precision setter
+  setArcInterpolationPrecision, // arc precision setter,
+  // exports for tests
+  _Point,
+  _Boundary,
+  _Cycle,
+  _getCycleArea
 };
 
 /**
  * Room resolution for V4 data -- classifies either all boundaries in
  * simpleFloor into rooms. Rooms have sequentially assigned IDs, and should
  * be re-labeled using room-association to avoid breaking bookable rooms.
- * @param floor: a simple V4 floor
+ * @param floor - a simple V4 floor
+ * @param logger - an optional logger instance
  * @return: an array of simple V4 rooms
  */
-function resolveRooms(simpleFloor) {
+function resolveRooms(simpleFloor, logger) {
 
   // ingest data
   const [bounds] = _ingestSimpleFloorSrcData(simpleFloor.data.points, simpleFloor.data.boundaries);
@@ -40,7 +47,7 @@ function resolveRooms(simpleFloor) {
 
   // build a tree from the resolved cycles, constructing a room hierarchy in
   // the process
-  const [encTree, cyclesByID] = _constructCycleEnclosureTree(cycles);
+  const [encTree, cyclesByID] = _constructCycleEnclosureTree(cycles, logger);
   DEBUG_QUIETLY || debug("finished enclosure tree");
 
   // now, use the structure of the tree to figure out what contains what,
@@ -83,11 +90,12 @@ function resolveRooms(simpleFloor) {
  * renderable area of a bookable room.
  *
  * which can (and will) include nesting
- * @param simpleFloor: simple V4 floor data with points and boundaries
- * @param rooms: rooms to combine
+ * @param simpleFloor - simple V4 floor data with points and boundaries
+ * @param rooms - rooms to combine
+ * @param logger - optional logger
  * @returns: [combined regions, enclosure tree]
  */
-function combineRooms (simpleFloor, rooms) {
+function combineRooms (simpleFloor, rooms, logger) {
 
   // all boundary groups + interior boundary IDs from rooms
   const allGroups = [];
@@ -116,8 +124,8 @@ function combineRooms (simpleFloor, rooms) {
 
   // dump bounds with multiple references into the interior boundary ID set
   Object.keys(boundRefCounts)
-  .filter(id => (boundRefCounts[id] > 1))
-  .forEach(id => interiorBoundIDSet[id] = 1);
+    .filter(id => (boundRefCounts[id] > 1))
+    .forEach(id => interiorBoundIDSet[id] = 1);
 
   // ingest floor data
   const [singleRefBounds] = _ingestSimpleFloorSrcData(
@@ -137,7 +145,7 @@ function combineRooms (simpleFloor, rooms) {
     const groupCycles = _findBoundaryCycles(groupBounds);
     finalCycles.push(...groupCycles);
   });
-  const [encTree, cyclesByID] = _constructCycleEnclosureTree(finalCycles);
+  const [encTree, cyclesByID] = _constructCycleEnclosureTree(finalCycles, logger);
 
   // assign holes, interior boundaries
   _assignHolesAndParents(encTree, cyclesByID);
@@ -208,7 +216,7 @@ function _findBoundaryCycles(bounds) {
       DEBUG_QUIETLY || debug("skipped marked cycle");
       continue;
     }
-    _unmarkBoundaries(bounds); // could just un-mark a subset...
+    _unmarkBoundaries(bounds);  // could just un-mark a subset...
     const cycleGroup = [];
     const startBound = cycle.boundaries[0];
     startBound.marked = true;
@@ -257,30 +265,14 @@ function _findBoundaryCycles(bounds) {
   const finalCycles = [];
   for (let cgi = 0; cgi < cycleGroups.length; cgi++) {
     const cycleGroup = cycleGroups[cgi];
-    let largestBBoxSize = 0;
     let largestArea = 0;
     let largestCycle = null;
     for (let ci = 0; ci < cycleGroup.length; ci++) {
       const cycle = cycleGroup[ci];
-      const cycleBBox = new Box2();
-      for (let bi = 0; bi < cycle.boundaries.length; bi++) {
-        const bound = cycle.boundaries[bi];
-        cycleBBox.expandByPoint(bound.start);
-        cycleBBox.expandByPoint(bound.end);
-      }
-      const cycleBBoxSize = cycleBBox.max.clone().sub(cycleBBox.min).length();
       const cycleArea = _getCycleArea(cycle);
       if (
-        (cycleBBoxSize >= largestBBoxSize) &&
-				(cycleArea >= largestArea)
+        (cycleArea >= largestArea)
       ) {
-        if (
-          (cycleBBoxSize === largestBBoxSize) &&
-          (cycle.boundaries.length < largestCycle.boundaries.length)
-        ) {
-          continue;
-        }
-        largestBBoxSize = cycleBBoxSize;
         largestArea = cycleArea;
         largestCycle = cycle;
       }
@@ -288,15 +280,11 @@ function _findBoundaryCycles(bounds) {
     DEBUG_QUIETLY || debug("traced section %s len, removing %s", cycleGroup.length, largestCycle.id);
     for (let ci = 0; ci < cycleGroup.length; ci++) {
       const cycle = cycleGroup[ci];
+      cycle.boundaryDirections = _resolveBoundaryDirections(cycle.boundaries);
+      cycle.makeCCW();
       if (cycle !== largestCycle) {
         finalCycles.push(cycle);
-        cycle.boundaryDirections = _resolveBoundaryDirections(cycle.boundaries);
-        cycle.makeCCW();
         cycle.perimeterCycle = largestCycle; // reuse this for holes
-      }
-      else { // make perimeter CCW
-        cycle.boundaryDirections = _resolveBoundaryDirections(cycle.boundaries);
-        cycle.makeCCW();
       }
     }
   }
@@ -305,12 +293,12 @@ function _findBoundaryCycles(bounds) {
 }
 
 /**
- * Converts a supplied floor source into points and boundaries ready suitable
+ * Converts a supplied floor source into points and boundaries suitable
  * for high-speed traversal. Will drop duplicate boundaries that share the
  * same points and arc height (but still handle taco-shaped rooms).
  *
- * @param srcPoints: an array of simple V4 floor data points
- * @param srcBounds: an array of simple V4 floor data boundaries
+ * @param srcPoints - an array of simple V4 floor data points
+ * @param srcBounds - an array of simple V4 floor data boundaries
  * @return: an array that contains the supplied points, boundaries,
  *          points by ID, and boundaries by ID
  */
@@ -458,7 +446,7 @@ function _Cycle (boundaries) {
   this.boundaries = boundaries;
   this.boundaryDirections = _resolveBoundaryDirections(boundaries);
   this.marked = false;
-  this.id = _cycleID++; // initial assiged ID used for logging only
+  this.id = _cycleID++;  // initial assiged ID used for logging only
   this.perimeterCycle = null;
   this.parent = null;
   this.holes = [];
@@ -482,8 +470,8 @@ _Cycle.prototype = {
 /**
  * Traces one or more cycles by traversing around a given boundary
  * loop
- * @param startBound: first boundary to examine
- * @param startBoundForwards: whether the trace is aligned with cycle direction
+ * @param startBound - first boundary to examine
+ * @param startBoundForwards - whether the trace is aligned with cycle direction
  * @return: traced cycles
  */
 const TMP_CYCLE = { id: "DEFAULT" };
@@ -732,7 +720,7 @@ function _resolveBoundaryDirections(boundaries) {
 /**
  * Constructs an enclosure tree for a given array of cycles
  */
-function _constructCycleEnclosureTree(cycles) {
+function _constructCycleEnclosureTree(cycles, logger) {
 
   // resolve arc-interpolated cycle polygons and outer bbox
   const outerBBox = new Box2();
@@ -750,7 +738,7 @@ function _constructCycleEnclosureTree(cycles) {
   }
 
   // create the enclosure tree
-  const encTree = new EnclosureTree(outerBBox);
+  const encTree = new EnclosureTree(outerBBox).setLogger(logger);
 
   // assign each cycle an ID and add its polygon to the enclosure tree
   const cyclesByID = {};
@@ -901,6 +889,10 @@ function _getCombinedPerimeters (cycles) {
   return combinedPerimeters;
 }
 
+function _angleSorter(a, b) {
+  return a.angle - b.angle;
+}
+
 /**
  * Sorts a point's boundary array counter-clockwise. When two boundaries are
  * within an error threshold due to arc angles, we reduce the impact of the
@@ -994,9 +986,6 @@ function _sortPointBoundariesCCW (point) {
     }
   }
 }
-function _angleSorter(a, b) {
-  return a.angle - b.angle;
-}
 
 /**
  * Sets the precision at which arcs will be interpolated during cycle nesting
@@ -1069,7 +1058,7 @@ _BoundaryGroup._nextID = 1;
 function _getCycleArea (cycle) {
   let area = 0;
   const dirs = _resolveBoundaryDirections(cycle.boundaries);
-  const firstBoundReversed = dirs[cycle.boundaries[0]] === -1;
+  const firstBoundReversed = dirs[cycle.boundaries[0].id] === -1;
   let prevPoint = firstBoundReversed ?
     cycle.boundaries[0].end :
     cycle.boundaries[0].start;

@@ -1,4 +1,9 @@
 {
-  "presets": [ "es2015", "react", "electron" ],
-  "plugins": [ "transform-object-rest-spread" ]
+  "presets": [
+    "@babel/preset-react",
+    "@babel/preset-env"
+  ],
+  "plugins": [
+    "@babel/plugin-proposal-object-rest-spread"
+  ]
 }

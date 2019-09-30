@@ -58,7 +58,7 @@ function createWindow () {
     });
   });
 
-    // init all the things
+  // init all the things
   mainWindow = new BrowserWindow({
     width: 1100,
     height: 700,
