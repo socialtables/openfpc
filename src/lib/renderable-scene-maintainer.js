@@ -611,7 +611,6 @@ export default class RenderableSceneMaintainer {
         bgMesh.position.copy(new Vector3(bgOffset.x, bgOffset.y, -2));
         bgMesh.name = "backgroundImage";
         this._bgMaterials[bg.get("id")] = bgMat;
-        console.log(bgMesh);
         resolve(bgMesh);
       }
       ));

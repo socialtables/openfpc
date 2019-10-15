@@ -3,7 +3,7 @@ import { Vector2 } from "three";
 // this is used to locate the webassembly files for opencv
 global.Module = {
   locateFile: (path) => {
-    const url = `../dist/wasm/${path}`;
+    const url = `../wasm/${path}`;
     return url;
   }
 };
@@ -12,6 +12,12 @@ global.Module = {
 
 function findSomeLines (imageData, centerX, centerY) {
   const cv = require("../vendor/opencv.js");
+
+  // if OpenCV hasn't loaded, don't do anything
+  if (!cv.Mat) {
+    return;
+  }
+
   const src = cv.matFromImageData(imageData);
   cv.cvtColor(src, src, cv.COLOR_RGBA2GRAY);
   const dst = cv.Mat.zeros(src.rows, src.cols, cv.CV_8UC3);
