@@ -12,7 +12,10 @@ import {
   TextureLoader,
   MeshBasicMaterial,
   PlaneGeometry,
-  Object3D
+  Object3D,
+  NearestFilter,
+  LinearFilter,
+  DoubleSide
 } from "three";
 
 import earcut from "earcut";
@@ -115,6 +118,7 @@ export default class RenderableSceneMaintainer {
     this._latestColorScheme = null;
 
     [this.materials, this.matLoadPromise] = generateMaterials(1);
+    this._bgMaterials = {};
 
     this._font = null;
     this._fontMaterial = null;
@@ -207,7 +211,8 @@ export default class RenderableSceneMaintainer {
     const addedBounds = addedEntities.valueSeq().filter(e => e.type === "boundary");
     const addedRegions = addedEntities.valueSeq().filter(e => e.type === "region");
     const addedObjects = addedEntities.valueSeq().filter(e => e.type === "object");
-    const canvasBorders = addedEntities.valueSeq().filter(e => e.type === "canvas-border");
+    const addedCanvasBorders = addedEntities.valueSeq().filter(e => e.type === "canvas-border");
+    const addedBackgroundImages = addedEntities.valueSeq().filter(e => e.type === "background");
 
     // tricky!
     let updatedPoints = [];
@@ -261,10 +266,20 @@ export default class RenderableSceneMaintainer {
       this.scene.add(objMesh);
       this.sceneEntityMap[o.get("id")] = objMesh;
     });
-    canvasBorders.forEach(cb => {
+    addedCanvasBorders.forEach(cb => {
       const cbMesh = this.constructCanvasBorderObject(cb);
       this.scene.add(cbMesh);
       this.sceneEntityMap[cb.get("id")] = cbMesh;
+    });
+    addedBackgroundImages.forEach(bg => {
+      const bgMeshPromise = this.constructBackgroundImageObject(bg);
+      bgMeshPromise.then(bgMesh => {
+        this.scene.add(bgMesh);
+        this.sceneEntityMap[bg.get("id")] = bgMesh;
+        if (this.onAsyncLoadFinished){
+          this.onAsyncLoadFinished();
+        }
+      });
     });
 
     // just re-create for MVP stage; entity churn is generally very minor
@@ -547,6 +562,58 @@ export default class RenderableSceneMaintainer {
       });
     }
     return objMesh;
+  }
+  constructBackgroundImageObject (bg) {
+    return new Promise((resolve) =>
+      this.textureLoader.load(bg.get("url"), tex => {
+        tex.magFilter = NearestFilter;
+        tex.minFilter = LinearFilter;
+        const img = tex.image;
+        let bgSize;
+        const autoSize = bg.get("autoSizeOnLoad");
+        if (autoSize) {
+          let bgSizeConstraints = autoSize;
+          if (Array.isArray(bgSizeConstraints)) {
+            bgSizeConstraints = {
+              width: autoSize[0],
+              height: autoSize[1]
+            };
+          }
+          bgSize = {
+            width: img.naturalWidth,
+            height: img.naturalHeight
+          };
+          const wFactor = bgSize.width / bgSizeConstraints.width;
+          const hFactor = bgSize.height / bgSizeConstraints.height;
+          const sizeFactor = Math.max(wFactor, hFactor);
+          bgSize.width /= sizeFactor;
+          bgSize.height /= sizeFactor;
+        }
+        else {
+          bgSize = {
+            width: bg.get("width") || 1000,
+            height: bg.get("height") || 1000
+          };
+        }
+        const bgOffset = new Vector2(
+          bg.get("centerX") || 500,
+          bg.get("centerY") || 500
+        );
+        const bgGeom = new PlaneGeometry(bgSize.width, bgSize.height, 2, 2);
+        const bgMat = new MeshBasicMaterial({
+          map: tex,
+          side: DoubleSide,
+          transparent: true,
+          opacity: 0.2
+        });
+        bgGeom.rotateX(Math.PI);
+        const bgMesh = new Mesh(bgGeom, bgMat);
+        bgMesh.position.copy(new Vector3(bgOffset.x, bgOffset.y, -2));
+        bgMesh.name = "backgroundImage";
+        this._bgMaterials[bg.get("id")] = bgMat;
+        resolve(bgMesh);
+      }
+      ));
   }
   constructCanvasBorderObject (cb) {
     const cbSize = {

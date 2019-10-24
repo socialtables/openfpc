@@ -1,4 +1,5 @@
 const path = require("path");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const { ProvidePlugin } = require("webpack");
@@ -88,6 +89,21 @@ module.exports = {
         use: [
           "glslify-loader"
         ]
+      },
+      {
+        test: /\.worker\.js$/,
+        use: [
+          {
+            loader: "worker-loader",
+            options: {
+              name: "js/[name].js",
+              // this violates the principle of exporting OpenFPC as a
+              // free-standing library, but it sure makes for a hell of a
+              // good demo
+              publicPath: "../dist/"
+            }
+          }
+        ]
       }
     ]
   },
@@ -99,6 +115,7 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: "[name].css"
     }),
+    new CopyWebpackPlugin([{ from: "src/vendor/wasm", to: "wasm" }]),
     process.env.ANALYZE_BUNDLE ?
       new BundleAnalyzerPlugin() :
       null

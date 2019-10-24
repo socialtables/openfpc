@@ -99,12 +99,25 @@ class V3FloorLoader extends BaseLoader {
       }
     });
 
+    // assign background image
+    const backgroundImages = [];
+    if (floor.floor_img) {
+      backgroundImages.push({
+        url: floor.floor_img,
+        // FPC2 scene size constants and center point
+        autoSizeOnLoad: [2400, 1600],
+        centerX: 1200,
+        centerY: 800
+      });
+    }
+
     return {
       scale,
       points,
       boundaries,
       objects,
-      regions
+      regions,
+      backgroundImages
     };
   }
 }

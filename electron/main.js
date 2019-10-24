@@ -64,7 +64,8 @@ function createWindow () {
     height: 700,
     title: cmdArgs.file ? `OpenFPC - ${cmdArgs.file}` : "OpenFPC",
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      nodeIntegrationInWorker: true
     }
   });
 
