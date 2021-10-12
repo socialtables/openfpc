@@ -39,7 +39,7 @@
     "debug": "^3.0.1",
     "dotenv": "^4.0.0",
     "earcut": "^2.1.1",
-    "electron": "^6.0.10",
+    "electron": "^11.5.0",
     "es6-map": "^0.1.5",
     "filter-invalid-dom-props": "^2.0.0",
     "immutable": "^v4.0.0-rc.2",
